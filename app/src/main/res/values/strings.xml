@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">HomeBudget</string>
+    <string name="current_value">Dostępne środki </string>
+    <string name="income">Przychody</string>
+    <string name="expenses">Wydatki</string>
+    <string name="day_limit">Dzienny limit</string>
+    <string name="currency"> zł</string>
+    <string name="savings">Oszczędności</string>
+    <string name="incomes_button">Przychody</string>
+    <string name="outcomes_button">Wydatki</string>
+    <string name="savings_button">Oszczędności</string>
+    <string name="wallet">Portfel</string>
+    <string name="confirm">Dodaj</string>
+    <string name="new_outcome">Nowy wydatek</string>
+    <string name="title_activity_expense">Outcomes</string>
+    <string name="tab_text_1">Bierzące wydatki</string>
+    <string name="tab_text_2">Stałe wydatki</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="add_expense_endpoint">current-expense/add</string>
+    <string name="add_fixed_expense_endpoint">fixed-expense/add</string>
 </resources>

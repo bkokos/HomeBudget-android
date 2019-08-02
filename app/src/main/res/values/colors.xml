@@ -3,4 +3,14 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="startGreen">#6ca630</color>
+    <color name="endBlue">#034aa6</color>
+    <color name="darkBlue">#0c1c54</color>
+    <color name="background">#353739</color>
+    <color name="transparent" />
+    <color name="savings">#6fb4d9</color>
+    <color name="expenses">#af3838</color>
+    <color name="main_color">#3d4754</color>
+    <color name="income">#539133</color>
+    <color name="lightBlue">#14b8d5</color>
 </resources>

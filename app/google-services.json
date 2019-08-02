@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "707760688121",
+    "firebase_url": "https://homebudget-3a3a5.firebaseio.com",
+    "project_id": "homebudget-3a3a5",
+    "storage_bucket": "homebudget-3a3a5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:707760688121:android:a10c15a10ee48afc",
+        "android_client_info": {
+          "package_name": "com.myapp.homebudget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "707760688121-c4uual0rkpjto6a55ik7hh969v7gnhlo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp6NDTn__dBpoqiI1rN85kWI2gCf5jYvo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="5">
+
+    <TextView
+        android:id="@+id/expensesValueList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="200.00zł"
+        android:textSize="25dp"
+        android:textColor="@color/expenses"/>
+    <TextView
+        android:id="@+id/expensesDescList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="zakupy w żabce"
+        android:textSize="18dp"
+        android:maxLines="1"
+        android:maxWidth="130dp"
+        android:textColor="@color/main_color"/>
+    <TextView
+        android:id="@+id/expensesUserList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="kokos"
+        android:textSize="12dp"
+        android:textColor="@color/main_color"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="right"
+        android:layout_weight="1">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/ic_payment_method"
+            />
+    </LinearLayout>
+</LinearLayout>

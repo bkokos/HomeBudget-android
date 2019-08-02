@@ -1,19 +1,294 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:plainpie="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    android:background="@color/main_color"  >
 
-    <TextView
-        android:layout_width="wrap_content"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="30dp"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:paddingTop="@dimen/appbar_padding_top"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-</android.support.constraint.ConstraintLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_weight="1"
+            android:background="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/app_name">
+
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/wallet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/rounded_panel_shape"
+        android:elevation="10dp"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:padding="5dp"
+            android:text="@string/wallet"
+            android:textColor="@color/main_color"
+            android:textSize="@dimen/title_text_size"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="79dp"
+                    android:layout_height="52dp"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="start"
+                    android:layout_marginLeft="10dp"
+                    android:padding="5dp"
+                    android:text="@string/current_value"
+                    android:textColor="@color/main_color"
+                    android:textSize="@dimen/description_text_size" />
+
+
+                <TextView
+                    android:id="@+id/walletValue"
+                    android:layout_width="251dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginEnd="28dp"
+                    android:layout_marginRight="10dp"
+                    android:text="4440.00"
+                    android:textAlignment="viewEnd"
+                    android:textColor="@color/main_color"
+                    android:textSize="45dp" />
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginEnd="0dp"
+                    android:padding="5dp"
+                    android:text="@string/currency"
+                    android:textColor="@color/main_color"
+                    android:textSize="@dimen/description_text_size" />
+
+            </RelativeLayout>
+        </LinearLayout>
+
+        <az.plainpie.PieView
+            android:id="@+id/pieView"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:layout_marginVertical="10dp"
+            plainpie:inner_pie_padding="30"
+            plainpie:inner_text_visibility="true"
+            plainpie:percentage="65"
+            plainpie:percentage_size="50" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginLeft="10dp"
+                android:padding="5dp"
+                android:text="@string/day_limit"
+                android:textColor="@color/main_color"
+                android:textSize="@dimen/add_description_text_size" />
+
+
+            <TextView
+                android:id="@+id/dayLimitValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="10dp"
+                android:padding="5dp"
+                android:text="100zł"
+                android:textColor="@color/main_color"
+                android:textSize="@dimen/add_description_text_size" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/incomePanel"
+        android:elevation="10dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/rounded_panel_shape"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="10dp"
+                android:text="@string/income"
+                android:textColor="@color/income"
+                android:textSize="@dimen/description_text_size" />
+
+            <TextView
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:text="123.00zł"
+                android:textColor="@color/income"
+                android:textSize="25dp" />
+
+            <ImageView
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:background="@drawable/ic_profit"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/savingsPanel"
+        android:elevation="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/rounded_panel_shape"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="10dp"
+                android:text="@string/savings"
+                android:textColor="@color/endBlue"
+                android:textSize="@dimen/description_text_size" />
+
+            <TextView
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:text="1723.00zł"
+                android:textColor="@color/endBlue"
+                android:textSize="25dp" />
+
+            <ImageView
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:background="@drawable/ic_piggy_bank"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/expensesPanel"
+        android:elevation="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@drawable/rounded_panel_shape"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingTop="10dp"
+                android:text="@string/expenses"
+                android:textColor="@color/expenses"
+                android:textSize="@dimen/description_text_size" />
+
+            <TextView
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:paddingTop="10dp"
+                android:paddingRight="20dp"
+                android:text="123.00zł"
+                android:textColor="@color/expenses"
+                android:textSize="25dp" />
+
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/expensesButton"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:minHeight="55dp"
+                android:minWidth="55dp"
+                android:maxWidth="55dp"
+                android:maxHeight="55dp"
+                android:clickable="true"
+                app:rippleColor="#fff"
+                plainpie:srcCompat="@drawable/ic_plus" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

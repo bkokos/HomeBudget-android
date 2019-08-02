@@ -1,4 +1,4 @@
-package com.homebudget;
+package com.myapp.homebudget;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.homebudget", appContext.getPackageName());
+        assertEquals("com.myapp.homebudget", appContext.getPackageName());
     }
 }
