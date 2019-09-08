@@ -1,4 +1,4 @@
-package com.myapp.homebudget.expenses;
+package com.myapp.homebudget.income;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.myapp.homebudget.R;
-import com.myapp.homebudget.expenses.adapter.ExpensesListAdapter;
-import com.myapp.homebudget.expenses.data.Expense;
+import com.myapp.homebudget.income.adapter.IncomesListAdapter;
+import com.myapp.homebudget.income.data.Income;
 import com.myapp.homebudget.util.Constans;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -24,56 +24,53 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Comparator;
 import java.util.List;
 
-public class FixedExpenses extends Fragment {
+public class IncomeFragment extends Fragment {
 
-    private ListView expensesList;
+    private ListView incomeList;
     private Handler handler;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fixed_expenses, container, false);
-        expensesList = rootView.findViewById(R.id.fixedExpensesLV);
+        View rootView = inflater.inflate(R.layout.fragment_income, container, false);
+
+        incomeList = rootView.findViewById(R.id.incomeLV);
         handler = new Handler() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what == 1) {
-                    List<Expense> expenses = (List<Expense>) msg.obj;
+                    List<Income> incomes = (List<Income>) msg.obj;
+                    incomes.sort(new Comparator<Income>() {
+                        @Override
+                        public int compare(Income o1, Income o2) {
+                            return -o1.getAddDate().compareTo(o2.getAddDate());
+                        }
+                    });
 
-                    if (!expenses.isEmpty()) {
-                        expenses.sort(new Comparator<Expense>() {
-                            @Override
-                            public int compare(Expense o1, Expense o2) {
-                                return -o1.getAddDate().compareTo(o2.getAddDate());
-                            }
-                        });
+                    IncomesListAdapter adapter = new IncomesListAdapter(incomes, getContext());
 
-                        ExpensesListAdapter adapter = new ExpensesListAdapter(expenses, getContext());
-
-                        expensesList.setAdapter(adapter);
-                    }
+                    incomeList.setAdapter(adapter);
                 }
             }
         };
 
-        initFixedExpensesList(rootView);
+        initIncomeList(rootView);
 
         return rootView;
     }
 
-    public void initFixedExpensesList(View rootView) {
+    public void initIncomeList(View rootView) {
 
         new Thread(new Runnable() {
             @Override
             public void run() {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<List<Expense>> expenses = restTemplate
-                        .exchange(Constans.HOST_NAME + "fixed-expense/get-all", HttpMethod.GET, null, new ParameterizedTypeReference<List<Expense>>() {});
+                ResponseEntity<List<Income>> income = restTemplate.exchange(Constans.HOST_NAME + "income/get-all", HttpMethod.GET, null, new ParameterizedTypeReference<List<Income>>() {
+                });
                 Message message = new Message();
                 message.what = 1;
-                message.obj = expenses.getBody();
-
+                message.obj = income.getBody();
                 handler.sendMessage(message);
             }
         }).start();

@@ -34,7 +34,7 @@ public class CurrentExpenses extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.current_expenses, container, false);
 
-        expensesList = rootView.findViewById(R.id.currentOutcomesLV);
+        expensesList = rootView.findViewById(R.id.currentExpensesLV);
         handler = new Handler() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
@@ -67,7 +67,7 @@ public class CurrentExpenses extends Fragment {
             @Override
             public void run() {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<List<Expense>> expenses = restTemplate.exchange(Constans.hostName + "current-expense/get-all", HttpMethod.GET, null, new ParameterizedTypeReference<List<Expense>>() {
+                ResponseEntity<List<Expense>> expenses = restTemplate.exchange(Constans.HOST_NAME + "current-expense/get-all", HttpMethod.GET, null, new ParameterizedTypeReference<List<Expense>>() {
                 });
                 Message message = new Message();
                 message.what = 1;

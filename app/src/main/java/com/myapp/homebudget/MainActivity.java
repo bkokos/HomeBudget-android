@@ -3,6 +3,7 @@ package com.myapp.homebudget;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.annotation.IdRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,14 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.myapp.homebudget.auth.User;
 import com.myapp.homebudget.expenses.ExpensesActivity;
 import com.myapp.homebudget.expenses.data.Expense;
 import com.myapp.homebudget.expenses.handler.ExpensesHandler;
-import com.myapp.homebudget.util.Constans;
+import com.myapp.homebudget.income.IncomeActivity;
 import com.myapp.homebudget.util.DecimalDigitsInputFilter;
 import com.myapp.homebudget.util.DialogType;
 
@@ -33,19 +33,17 @@ import az.plainpie.animation.PieAngleAnimation;
 
 import static com.myapp.homebudget.expenses.util.ExpensesConstans.EXP_MSG_CONFIRM;
 import static com.myapp.homebudget.expenses.util.ExpensesConstans.EXP_MSG_ERROR;
+import static com.myapp.homebudget.util.Constans.HOST_NAME;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private PieView pieView;
-    private FloatingActionButton outcomeButton;
-    private FloatingActionButton incomeButton;
-    private FloatingActionButton savingsButton;
+    private FloatingActionButton expenseButton;
     private EditText dialogDesc;
     private EditText dialogValue;
     private TextView dialogTitle;
     private AlertDialog dialog;
-    private LinearLayout outcomesPanel;
     private User user;
     private ExpensesHandler expensesHandler;
 
@@ -97,15 +95,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initPanels() {
-        initExpensesPanel();
+        initPanel(R.id.expensesPanel, ExpensesActivity.class);
+        initPanel(R.id.incomePanel, IncomeActivity.class);
     }
 
-    private void initExpensesPanel() {
-        outcomesPanel = findViewById(R.id.expensesPanel);
-        outcomesPanel.setOnClickListener(new View.OnClickListener() {
+    private void initPanel(@IdRes int id, final Class clazz) {
+        findViewById(id).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ExpensesActivity.class);
+                Intent intent = new Intent(MainActivity.this, clazz);
                 startActivity(intent);
             }
         });
@@ -122,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initButtons() {
 
-        outcomeButton = findViewById(R.id.expensesButton);
+        expenseButton = findViewById(R.id.expensesButton);
 
-        outcomeButton.setOnClickListener(new View.OnClickListener() {
+        expenseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 initDialog(DialogType.Expense);
@@ -137,12 +135,12 @@ public class MainActivity extends AppCompatActivity {
     private void initDialog(DialogType type) {
         final AlertDialog.Builder dialogBuider = new AlertDialog.Builder(MainActivity.this);
         View dView = getLayoutInflater().inflate(R.layout.dialog_add, null);
-        dialogValue = dView.findViewById(R.id.et_outcome_value);
+        dialogValue = dView.findViewById(R.id.fieldValue);
         dialogValue.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(8, 2)});
-        dialogDesc = dView.findViewById(R.id.et_outcome_description);
+        dialogDesc = dView.findViewById(R.id.fieldDescription);
         dialogTitle = dView.findViewById(R.id.dialog_title);
         dialogTitle.setText(type.getDialogTitle());
-        Button btnConfirm = dView.findViewById(R.id.btnOutcomeConf);
+        Button btnConfirm = dView.findViewById(R.id.btnConfirmation);
 
         dialogValue.setHint("*Kwota");
         dialogDesc.setHint("Opis");
@@ -185,14 +183,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean add() {
-        final String desc = dialogDesc.getText().toString();
-
-        System.out.println(desc);
-
         if (validateField(dialogValue)) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    String desc = dialogDesc.getText().toString();
                     BigDecimal value = new BigDecimal(dialogValue.getText().toString());
                     final String description = desc.length() != 0 ? desc : "Nowy wydatek";
 
@@ -201,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
                     Expense expense = new Expense(value.toString(), description, user.getUserName(), 1l, null);
 
                     RestTemplate restTemplate = new RestTemplate();
-                    Boolean isAdded = restTemplate.postForObject(Constans.hostName + "current-expense/add", expense, Boolean.class);
+                    Boolean isAdded = restTemplate.postForObject(HOST_NAME + "current-expense/add", expense, Boolean.class);
 
                     Message message = new Message();
                     if (isAdded) {
