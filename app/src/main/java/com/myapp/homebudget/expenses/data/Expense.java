@@ -7,14 +7,14 @@ public class Expense {
     private String value;
     private String desc;
     private String userName;
-    private Long walletId;
+    private String walletId;
     private Date addDate;
 
 
     public Expense() {
     }
 
-    public Expense(String value, String desc, String userName, Long walletId, Long id) {
+    public Expense(String value, String desc, String userName, String walletId, Long id) {
         this.id = id;
         this.value = value;
         this.desc = desc;
@@ -38,7 +38,7 @@ public class Expense {
         return userName;
     }
 
-    public Long getWalletId() {
+    public String getWalletId() {
         return walletId;
     }
 

@@ -4,13 +4,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.myapp.homebudget.R;
 import com.myapp.homebudget.income.adapter.IncomesListAdapter;
 import com.myapp.homebudget.income.data.Income;
@@ -29,10 +31,14 @@ public class IncomeFragment extends Fragment {
     private ListView incomeList;
     private Handler handler;
 
+    private FirebaseUser firebaseUser;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_income, container, false);
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         incomeList = rootView.findViewById(R.id.incomeLV);
         handler = new Handler() {
@@ -66,7 +72,7 @@ public class IncomeFragment extends Fragment {
             @Override
             public void run() {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<List<Income>> income = restTemplate.exchange(Constans.HOST_NAME + "income/get-all", HttpMethod.GET, null, new ParameterizedTypeReference<List<Income>>() {
+                ResponseEntity<List<Income>> income = restTemplate.exchange(Constans.HOST_NAME + "income/get-all?id=" + firebaseUser.getUid(), HttpMethod.GET, null, new ParameterizedTypeReference<List<Income>>() {
                 });
                 Message message = new Message();
                 message.what = 1;

@@ -3,18 +3,21 @@ package com.myapp.homebudget.expenses;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.myapp.homebudget.R;
+import com.myapp.homebudget.auth.User;
 import com.myapp.homebudget.expenses.data.Expense;
 import com.myapp.homebudget.expenses.handler.ExpensesHandler;
 import com.myapp.homebudget.util.Constans;
@@ -38,6 +41,9 @@ public class ExpensesActivity extends WalletActivity {
     private CurrentExpenses currentExpenses;
     private FixedExpenses fixedExpenses;
 
+    private FirebaseUser firebaseUser;
+    private User user;
+
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -51,6 +57,10 @@ public class ExpensesActivity extends WalletActivity {
         super.onCreate(savedInstanceState);
         setContext(ExpensesActivity.this);
         setContentView(R.layout.activity_expenses);
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        user = User.of(firebaseUser.getEmail());
+
         expenseType = ExpenseType.Current;
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -152,7 +162,7 @@ public class ExpensesActivity extends WalletActivity {
                     BigDecimal value = new BigDecimal(dialogValue.getText().toString());
                     final String description = desc.length() != 0 ? desc : "Wydatek";
 
-                    Expense expense = new Expense(value.toString(), description, "koko", 1l, null); //TODO user name
+                    Expense expense = new Expense(value.toString(), description, user.getUserName(), firebaseUser.getUid(), null); //TODO user name
                     String endpoint = type == DialogType.Expense ? getString(R.string.add_expense_endpoint) : getString(R.string.add_fixed_expense_endpoint);
                     RestTemplate restTemplate = new RestTemplate();
                     Boolean isAdded = restTemplate.postForObject(Constans.HOST_NAME + endpoint, expense, Boolean.class);

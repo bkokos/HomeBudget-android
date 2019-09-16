@@ -2,12 +2,8 @@ package com.myapp.homebudget;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.IdRes;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,17 +12,36 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import com.firebase.client.Firebase;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.myapp.homebudget.auth.LoginActivity;
 import com.myapp.homebudget.auth.User;
 import com.myapp.homebudget.expenses.ExpensesActivity;
 import com.myapp.homebudget.expenses.data.Expense;
 import com.myapp.homebudget.expenses.handler.ExpensesHandler;
 import com.myapp.homebudget.income.IncomeActivity;
+import com.myapp.homebudget.util.Constans;
 import com.myapp.homebudget.util.DecimalDigitsInputFilter;
 import com.myapp.homebudget.util.DialogType;
 
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.logging.Logger;
 
 import az.plainpie.PieView;
 import az.plainpie.animation.PieAngleAnimation;
@@ -34,9 +49,14 @@ import az.plainpie.animation.PieAngleAnimation;
 import static com.myapp.homebudget.expenses.util.ExpensesConstans.EXP_MSG_CONFIRM;
 import static com.myapp.homebudget.expenses.util.ExpensesConstans.EXP_MSG_ERROR;
 import static com.myapp.homebudget.util.Constans.HOST_NAME;
+import static java.math.BigDecimal.valueOf;
+import static java.math.RoundingMode.HALF_DOWN;
+import static java.math.RoundingMode.HALF_UP;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    Logger log = Logger.getLogger("MainActivity");
 
     private PieView pieView;
     private FloatingActionButton expenseButton;
@@ -44,8 +64,21 @@ public class MainActivity extends AppCompatActivity {
     private EditText dialogValue;
     private TextView dialogTitle;
     private AlertDialog dialog;
-    private User user;
     private ExpensesHandler expensesHandler;
+
+    private Handler mainHandler;
+
+    //panel values
+    private TextView expensesValue;
+    private TextView incomesValue;
+    private TextView savingsValue;
+    private TextView availableValues;
+    private TextView dayLimit;
+
+    private FirebaseAuth mAuth;
+    private FirebaseUser firebaseUser;
+
+    private User user;
 
 
     private boolean valueFlag;
@@ -55,14 +88,46 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        user = new User("kokos", "email", "pass");
+        Firebase.setAndroidContext(this);
+        mAuth = FirebaseAuth.getInstance();
+
+        firebaseUser = mAuth.getCurrentUser();
+
+        user = User.of(firebaseUser.getEmail());
+
+        getWalletValues();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getWalletValues();
+
+        mainHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case 1:
+                        List<BigDecimal> walletValues = (List<BigDecimal>) msg.obj;
+                        if (walletValues.size() == 3) {
+                            BigDecimal expenses = walletValues.get(0);
+                            BigDecimal incomes = walletValues.get(1);
+                            BigDecimal savings = walletValues.get(2);
+                            setPanelsValues(expenses, incomes, savings);
+                        }
+                        break;
+                }
+            }
+        };
 
         valueFlag = false;
-        initializeGui();
+
         expensesHandler = new ExpensesHandler(this);
+        initializeGui();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getWalletValues();
     }
 
     @Override
@@ -74,13 +139,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
             return true;
         }
 
@@ -89,14 +153,76 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void initializeGui() {
+
+        expensesValue = findViewById(R.id.expensesTV);
+        incomesValue = findViewById(R.id.incomeTV);
+        savingsValue = findViewById(R.id.savingsTV);
+        availableValues = findViewById(R.id.walletValue);
+        dayLimit = findViewById(R.id.dayLimitValue);
+
         initChart();
         initButtons();
         initPanels();
+
+
+    }
+
+    private void getWalletValues() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                RestTemplate restTemplate = new RestTemplate();
+                ResponseEntity<List<BigDecimal>> walletValues = restTemplate
+                        .exchange(Constans.HOST_NAME + "wallet/get-values?id=" + firebaseUser.getUid(), HttpMethod.GET, null, new ParameterizedTypeReference<List<BigDecimal>>() {
+                        });
+
+                Message message = new Message();
+                message.what = 1;
+                message.obj = walletValues.getBody();
+                mainHandler.sendMessage(message);
+            }
+        }).start();
+
     }
 
     private void initPanels() {
         initPanel(R.id.expensesPanel, ExpensesActivity.class);
         initPanel(R.id.incomePanel, IncomeActivity.class);
+    }
+
+    private void setPanelsValues(BigDecimal expenses, BigDecimal incomes, BigDecimal savings) {
+        availableValues.setText(incomes.subtract(expenses).toString());
+
+        setDayLimit(incomes, expenses);
+
+        expensesValue.setText(expenses.toString() + "zł");
+        incomesValue.setText(incomes.toString() + "zł");
+        savingsValue.setText(savings.toString() + "zł");
+
+        setPieView(incomes, expenses);
+    }
+
+    private void setPieView(BigDecimal incomes, BigDecimal expenses) {
+        float percenrtage = 0;
+        if(incomes.compareTo(BigDecimal.ZERO) > 0){
+            percenrtage= incomes.subtract(expenses).divide(incomes, 2, HALF_UP).multiply(valueOf(100)).setScale(0).floatValue();
+        }
+
+        pieView.setPercentage(percenrtage);
+        animatePieView();
+    }
+
+    private void setDayLimit(BigDecimal incomes, BigDecimal expenses) {
+        BigDecimal cash = incomes.subtract(expenses);
+
+        MathContext mc = new MathContext(2, HALF_DOWN);
+
+        Calendar calendar = new GregorianCalendar();
+        int daysRemaining = calendar.getActualMaximum(Calendar.DAY_OF_MONTH) - calendar.get(Calendar.DATE);
+
+        BigDecimal dayliLimit = cash.divide(valueOf(daysRemaining), mc);
+
+        dayLimit.setText(dayliLimit.toPlainString() + "zł");
     }
 
     private void initPanel(@IdRes int id, final Class clazz) {
@@ -112,10 +238,13 @@ public class MainActivity extends AppCompatActivity {
     private void initChart() {
         pieView = findViewById(R.id.pieView);
 
+        animatePieView();
+    }
+
+    private void animatePieView() {
         PieAngleAnimation animation = new PieAngleAnimation(pieView);
         animation.setDuration(1000);
         pieView.startAnimation(animation);
-
     }
 
     private void initButtons() {
@@ -193,7 +322,7 @@ public class MainActivity extends AppCompatActivity {
 
                     System.out.println(description);
 
-                    Expense expense = new Expense(value.toString(), description, user.getUserName(), 1l, null);
+                    Expense expense = new Expense(value.toString(), description, user.getUserName(), firebaseUser.getUid(), null);
 
                     RestTemplate restTemplate = new RestTemplate();
                     Boolean isAdded = restTemplate.postForObject(HOST_NAME + "current-expense/add", expense, Boolean.class);
@@ -203,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                         message.what = EXP_MSG_CONFIRM;
                         message.obj = expense;
                         expensesHandler.sendMessage(message);
+                        getWalletValues();
                     } else {
                         message.what = EXP_MSG_ERROR;
                         expensesHandler.sendMessage(message);

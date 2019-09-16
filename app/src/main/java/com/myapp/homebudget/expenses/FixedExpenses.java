@@ -4,13 +4,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.myapp.homebudget.R;
 import com.myapp.homebudget.expenses.adapter.ExpensesListAdapter;
 import com.myapp.homebudget.expenses.data.Expense;
@@ -69,7 +70,7 @@ public class FixedExpenses extends Fragment {
             public void run() {
                 RestTemplate restTemplate = new RestTemplate();
                 ResponseEntity<List<Expense>> expenses = restTemplate
-                        .exchange(Constans.HOST_NAME + "fixed-expense/get-all", HttpMethod.GET, null, new ParameterizedTypeReference<List<Expense>>() {});
+                        .exchange(Constans.HOST_NAME + "fixed-expense/get-all?id=" + FirebaseAuth.getInstance().getCurrentUser().getUid(), HttpMethod.GET, null, new ParameterizedTypeReference<List<Expense>>() {});
                 Message message = new Message();
                 message.what = 1;
                 message.obj = expenses.getBody();

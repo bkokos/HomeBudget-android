@@ -4,13 +4,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.myapp.homebudget.R;
 import com.myapp.homebudget.expenses.adapter.ExpensesListAdapter;
 import com.myapp.homebudget.expenses.data.Expense;
@@ -28,6 +30,7 @@ public class CurrentExpenses extends Fragment {
 
     private ListView expensesList;
     private Handler handler;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -67,8 +70,9 @@ public class CurrentExpenses extends Fragment {
             @Override
             public void run() {
                 RestTemplate restTemplate = new RestTemplate();
-                ResponseEntity<List<Expense>> expenses = restTemplate.exchange(Constans.HOST_NAME + "current-expense/get-all", HttpMethod.GET, null, new ParameterizedTypeReference<List<Expense>>() {
-                });
+                ResponseEntity<List<Expense>> expenses = restTemplate.exchange(Constans.HOST_NAME + "current-expense/get-all?id=" + FirebaseAuth.getInstance().getCurrentUser().getUid(),
+                        HttpMethod.GET, null, new ParameterizedTypeReference<List<Expense>>() {
+                        });
                 Message message = new Message();
                 message.what = 1;
                 message.obj = expenses.getBody();

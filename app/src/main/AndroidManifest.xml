@@ -10,9 +10,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".income.IncomeActivity"></activity>
+        <activity android:name=".auth.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".income"
+            android:name=".income.IncomeActivity"
             android:label="@string/title_activity_income"
             android:theme="@style/AppTheme.NoActionBar.NoActionBar" />
         <activity
@@ -21,18 +27,15 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".expenses.ExpensesActivity"
             android:label="@string/title_activity_expense"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".NotActivity" />
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="C2D_MESSAGE" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

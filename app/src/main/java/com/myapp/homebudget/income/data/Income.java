@@ -7,7 +7,7 @@ public class Income {
     private String value;
     private String desc;
     private String userName;
-    private Long walletId;
+    private String walletId;
     private Date addDate;
 
 
@@ -15,14 +15,14 @@ public class Income {
 
     }
 
-    public Income(String value, String desc, String userName, Long walletId) {
+    public Income(String value, String desc, String userName, String walletId) {
         this.value = value;
         this.desc = desc;
         this.userName = userName;
         this.walletId = walletId;
     }
 
-    public Income(Long id, String value, String desc, String userName, Long walletId, Date addDate) {
+    public Income(Long id, String value, String desc, String userName, String walletId, Date addDate) {
         this.id = id;
         this.value = value;
         this.desc = desc;
@@ -47,7 +47,7 @@ public class Income {
         return userName;
     }
 
-    public Long getWalletId() {
+    public String getWalletId() {
         return walletId;
     }
 

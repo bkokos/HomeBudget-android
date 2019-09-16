@@ -5,10 +5,15 @@ public class User {
     private String email;
     private String password;
 
-    public User(String userName, String email, String password) {
+
+    public static User of(String email){
+        String userName = email.split("@")[0];
+        return new User(userName, email);
+    }
+
+    private User(String userName, String email) {
         this.userName = userName;
         this.email = email;
-        this.password = password;
     }
 
     public String getUserName() {
@@ -17,10 +22,6 @@ public class User {
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
 }

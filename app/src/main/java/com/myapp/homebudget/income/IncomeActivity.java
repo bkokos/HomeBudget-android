@@ -3,18 +3,21 @@ package com.myapp.homebudget.income;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.myapp.homebudget.R;
+import com.myapp.homebudget.auth.User;
 import com.myapp.homebudget.income.data.Income;
 import com.myapp.homebudget.income.handler.IncomesHandler;
 import com.myapp.homebudget.util.Constans;
@@ -41,12 +44,18 @@ public class IncomeActivity extends WalletActivity {
 
     private IncomesHandler handler;
 
+    private FirebaseUser firebaseUser;
+    private User user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContext(IncomeActivity.this);
         setContentView(R.layout.activity_income);
+
+        firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        user = User.of(firebaseUser.getEmail());
 
         Toolbar toolbar = findViewById(R.id.toolbar_income);
         setSupportActionBar(toolbar);
@@ -93,10 +102,10 @@ public class IncomeActivity extends WalletActivity {
                     BigDecimal value = new BigDecimal(dialogValue.getText().toString());
                     final String description = desc.length() != 0 ? desc : "Przychód";
 
-                    Income income = new Income(value.toString(), description, "koko", 1l);//TODO user name
+                    Income income = new Income(value.toString(), description, user.getUserName(), firebaseUser.getUid());
                     String endpoint = getString(R.string.add_income);
                     RestTemplate restTemplate = new RestTemplate();
-                    Boolean isAdded = restTemplate.postForObject(Constans.HOST_NAME + endpoint, income, Boolean.class);
+                    Boolean isAdded = restTemplate.postForObject(Constans.HOST_NAME + endpoint + "?id=" + firebaseUser.getUid(), income, Boolean.class);
 
                     Message message = new Message();
                     if (isAdded) {
