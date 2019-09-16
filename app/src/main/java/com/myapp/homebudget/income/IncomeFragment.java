@@ -4,12 +4,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
+import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,6 +25,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,6 +33,8 @@ public class IncomeFragment extends Fragment {
 
     private ListView incomeList;
     private Handler handler;
+
+    private TextView incomeSummary;
 
     private FirebaseUser firebaseUser;
 
@@ -39,6 +44,7 @@ public class IncomeFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_income, container, false);
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        incomeSummary = rootView.findViewById(R.id.incomePanelSummary);
 
         incomeList = rootView.findViewById(R.id.incomeLV);
         handler = new Handler() {
@@ -53,6 +59,14 @@ public class IncomeFragment extends Fragment {
                             return -o1.getAddDate().compareTo(o2.getAddDate());
                         }
                     });
+
+                    BigDecimal summary  = BigDecimal.ZERO;
+
+                    for(Income i : incomes){
+                        summary.add(new BigDecimal(i.getValue()));
+                    }
+
+                    incomeSummary.setText(summary.toPlainString());
 
                     IncomesListAdapter adapter = new IncomesListAdapter(incomes, getContext());
 
